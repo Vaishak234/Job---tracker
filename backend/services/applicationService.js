@@ -14,6 +14,22 @@ export const createApplication = async (data) => {
 
 
 
+export const getApplications = async (userId, status) => {
+    try {
+        const query = { userId: userId };
+        if (status) {
+            query.status = status;
+        }
+        const applications = await ApplicationModel.find(query);
+
+        return applications;
+    } catch (error) {
+        console.log('error in fetching applications', error);
+    }
+}
+
+
+
 export const deleteApplication = async (id) => {
     try {
         const application = await ApplicationModel.deleteOne({_id:id})
@@ -24,17 +40,4 @@ export const deleteApplication = async (id) => {
 
     }
 }
-
-export const getApplications = async (userId) => {
-    try {
-        const application = await ApplicationModel.find({userId})
-
-        return application;
-    } catch (error) {
-        console.log('error in creating user', error);
-
-    }
-}
-
-
 

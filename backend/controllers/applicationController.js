@@ -7,12 +7,9 @@ import { createApplication, deleteApplication, getApplications } from '../servic
 
 export const createApplicationController = asyncHandler(async (req, res) => {
 
-    
-        console.log(req.body);
+
     // validating the data using joi validation
-    const { error } = applicationSchema.validate(req.body)
-    console.log(error);
-    
+    const { error } = applicationSchema.validate(req.body)    
 
     if (error) {
         return res.status(400).json({ message: error.details[0].message })
@@ -32,19 +29,6 @@ export const createApplicationController = asyncHandler(async (req, res) => {
     res.status(201).json({ message: 'application created successfully', success: true, data:newApplication });
 });
 
-
-export const getAllApplicationController = asyncHandler(async (req, res) => {
-
-     const userId = new mongoose.Types.ObjectId(req.userId)
-
-     if(!userId) return res.status(400).json({ message: 'user not found', success:false})
-
-     const allApplication = await getApplications(userId)
-   
-      if(!allApplication) return res.status(400).json({ message: 'error in fetching application' , success:false})
-
-    res.status(201).json({ message: 'applications fetched successfully', success: true ,data:allApplication });
-});
 
 
 
@@ -87,4 +71,38 @@ export const deleteApplicationController = asyncHandler(async (req, res) => {
     
     res.status(201).json({ message: 'application deleted successfully', success: true ,data:id });
 
+});
+
+
+export const getApplicationController = asyncHandler(async (req, res) => {
+    const userId = new mongoose.Types.ObjectId(req.userId);
+    const { query, status  } = req.query.query;
+
+    const page = parseInt(req.query.query.page) || 1; 
+    const limit = parseInt(req.query.query.limit) || 5; 
+
+    const skip = (page - 1) * limit; 
+ 
+
+    if (!userId) return res.status(400).json({ message: 'user not found', success: false });
+
+    let searchCriteria = { userId };
+
+    if (query) {
+        searchCriteria.company = { $regex: query, $options: 'i' };
+    }
+
+    if (status) {
+        searchCriteria.status = status;
+    }
+    
+
+    const searchResults = await ApplicationModel.find(searchCriteria).limit(limit).skip(skip);
+
+    console.log(searchResults.length);
+    
+
+    if (!searchResults) return res.status(400).json({ message: 'error in searching applications', success: false });
+
+    res.status(200).json({ message: 'applications found successfully', success: true, data: searchResults });
 });

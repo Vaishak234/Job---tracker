@@ -10,11 +10,12 @@ const applicationSchema = new mongoose.Schema({
     },
     company: {
         type: String,
-        required: [true, 'Company name is required'],
+        required: [true, 'Company name is required']
     },
     position: {
         type: String,
         required: [true, 'Position is required'],
+
     },
     dateApplied: {
         type: Date,
@@ -31,6 +32,10 @@ const applicationSchema = new mongoose.Schema({
     },
 
 }, { timestamps: true });
+
+
+applicationSchema.index({company:1})
+applicationSchema.index({position:1})
 
 const ApplicationModel = mongoose.model("Application", applicationSchema);
 

@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { applicationSchema } from "../../schema/application";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { useDispatch } from "react-redux";
-import { createApplication, updateApplication } from "../../features/application/applicationActions";
+import { updateApplication } from "../../features/application/applicationActions";
 import { toastError, toastSuccess } from "../../utils/toaster";
 
 const EditApplicationModal = ({ open, handleClose , application }) => {
@@ -14,6 +14,9 @@ const EditApplicationModal = ({ open, handleClose , application }) => {
     useAxiosPrivate()
 
   const dispatch = useDispatch()
+
+   console.log(application.dateApplied);
+   
 
     const initialValues = {
         company: application?.company || '',
@@ -31,12 +34,12 @@ const onSubmit = async (values) => {
             company: values.company,
             position: values.position,
             status: values.status,
-            dateApplied: values.dateApplied,
+            dateApplied: values.dateApplied.split('T')[0],
             note: values.note
 
         }
         const response = await dispatch(updateApplication(applicationdata)).unwrap();
-      
+
         if(response){
             toastSuccess(response)
             handleClose()

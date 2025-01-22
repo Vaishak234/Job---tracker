@@ -17,9 +17,10 @@ export const createApplication = createAsyncThunk('applications/createApplicatio
 
 export const getAllApplications = createAsyncThunk('applications/getAllApplications', async (_, thunkAPI) => {
     try {
+        
         const response = await axiosPrivate.get('/applications');
-   
-        return response?.data
+        
+        return response?.data;
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -44,6 +45,24 @@ export const deleteApplication = createAsyncThunk('applications/deleteApplicatio
         const response = await axiosPrivate.delete('/applications/'+id);
    
         return response.data?.data
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
+})
+
+
+export const searchApplication = createAsyncThunk('applications/searchApplication', async (search, thunkAPI) => {
+   
+
+    try {
+        const response = await axiosPrivate.get('/applications', {
+            params: { query: search  }
+        });
+
+        console.log(response.data.data);
+        
+         
+        return response?.data?.data
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }

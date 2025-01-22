@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { deleteApplication } from '../../features/application/applicationActions';
 import { useState } from 'react';
 import EditApplicationModal from '../user/EditApplicationModal';
+import { toastError, toastSuccess } from '../../utils/toaster';
 
 const CardUi = ({ application }) => {
 
@@ -19,12 +20,14 @@ const CardUi = ({ application }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await dispatch(deleteApplication(application._id))
-
-      console.log(response);
-
+      const response = await dispatch(deleteApplication(application._id)).unwrap()
+      
+       if(response){
+        toastSuccess({message:'application deleted successfully'})
+       }
     } catch (error) {
       console.log(error);
+      toastError(error)
 
     }
   }
@@ -40,10 +43,10 @@ const CardUi = ({ application }) => {
 
   return (
     <>
-      <Box item xs={12} sm={6} md={6} lg={4} xl={3} sx={{ maxWidth: '300px', width: "100%" }}>
+      <Box item xs={12} sm={6} md={6} lg={4} xl={3} sx={{ maxWidth: '280px', width: "100%" }}>
         <Card sx={'CARD_PROPERTY'}>
           <CardHeader
-            sx={{ p: 3 }}
+            sx={{ px: 3 }}
 
             action={
               <IconButton aria-label="settings">
@@ -58,18 +61,20 @@ const CardUi = ({ application }) => {
                 underline="none"
                 sx={{ fontWeight: "medium" }}
               >
-                {application?.company}
+                {application?.position}
               </Link>
             }
-            subheader="September 14, 2016"
+            subheader={application?.company}
           />
-          <CardContent sx={{ p: 3 }}>
-            <Typography variant="body1" color="black" sx={{ mb: 3 }}>
+          
+          <CardContent sx={{ px: 3 }}>
+            <Typography variant="body1" color="black" sx={{ mb: 1 }}>
               status : {application?.status}
             </Typography>
 
+            <Typography variant="caption" color="initial">{`Applied : ${application.dateApplied.split('T')[0]}`}</Typography>
 
-            <Box sx={{ display: "flex", gap: 1 }}>
+            <Box sx={{ display: "flex", gap: 1 ,mt:1 }}>
               <Button variant="outlined" onClick={handleDelete}>delete</Button>
               <Button variant="contained" onClick={handleEdit}>Edit</Button>
             </Box>

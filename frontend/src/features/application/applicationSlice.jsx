@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { createApplication, deleteApplication, getAllApplications, updateApplication } from "./applicationActions"
+import { createApplication, deleteApplication, getAllApplications, searchApplication, updateApplication } from "./applicationActions"
 
 
 
@@ -51,6 +51,13 @@ const applicationSlice = createSlice({
 
                       state.applications[index] = action.payload?.data
                       
+                      state.status = "success"
+                      state.error = null
+                  })
+                  
+                  .addCase(searchApplication.fulfilled, (state, action) => {
+                                         
+                      state.applications = action.payload
                       state.status = "success"
                       state.error = null
                   })
